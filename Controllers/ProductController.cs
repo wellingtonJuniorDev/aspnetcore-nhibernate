@@ -1,45 +1,32 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using AspNetCoreNHibernate.Models;
-using AspNetCoreNHibernate.Repositories;
+using AspNetCoreNHibernate.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AspNetCoreNHibernate.Controllers
 {
     public class ProductController : Controller
     {
-        private readonly ProductRepository productRepository;
+        private readonly IProductRepository _productRepository;
 
-        public ProductController(NHibernate.ISession session) => productRepository = new ProductRepository(session);
+        public ProductController(IProductRepository productRepository)
+        {
+            _productRepository = productRepository;
+        }
         
         // GET: Products
-        public ActionResult Index()
-        {
-            return View(productRepository.FindAll().ToList());
-        }
+        public ActionResult Index() 
+            => View(_productRepository.FindAll().ToList());
 
         // GET: Products/Details/5
-        public async Task<ActionResult> Details(long? id)
-        {
-            if (id == null)
-            {
-                return StatusCode(StatusCodes.Status404NotFound);
-            }
-            Product product = await productRepository.FindByID(id.Value);
-            if (product == null)
-            {
-                return StatusCode(StatusCodes.Status404NotFound);
-            }
-            return View(product);
-        }
+        public async Task<ActionResult> Details(long? id) 
+            => await CheckIntegrityBeforViewAsync(id);
 
         // GET: Products/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
+        public ActionResult Create() 
+            => View();
 
         // POST: Products/Create
         [HttpPost]
@@ -48,7 +35,7 @@ namespace AspNetCoreNHibernate.Controllers
         {
             if (ModelState.IsValid)
             {
-                await productRepository.Add(product);
+                await _productRepository.AddAsync(product);
                 return RedirectToAction("Index");
             }
 
@@ -57,18 +44,7 @@ namespace AspNetCoreNHibernate.Controllers
 
         // GET: Products/Edit/5
         public async Task<ActionResult> Edit(long? id)
-        {
-            if (id == null)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest);
-            }
-            Product product = await productRepository.FindByID(id.Value);
-            if (product == null)
-            {
-                return StatusCode(StatusCodes.Status404NotFound);
-            }
-            return View(product);
-        }
+            => await CheckIntegrityBeforViewAsync(id);
 
         // POST: Products/Edit/5
         [HttpPost]
@@ -77,7 +53,7 @@ namespace AspNetCoreNHibernate.Controllers
         {
             if (ModelState.IsValid)
             {
-                await productRepository.Update(product);
+                await _productRepository.UpdateAsync(product);
                 return RedirectToAction("Index");
             }
             return View(product);
@@ -85,26 +61,31 @@ namespace AspNetCoreNHibernate.Controllers
 
         // GET: Products/Delete/5
         public async Task<ActionResult> Delete(long? id)
-        {
-            if (id == null)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest);
-            }
-            Product product = await productRepository.FindByID(id.Value);
-            if (product == null)
-            {
-                return StatusCode(StatusCodes.Status404NotFound);
-            }
-            return View(product);
-        }
+            => await CheckIntegrityBeforViewAsync(id);
 
         // POST: Products/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(long id)
         {
-            await productRepository.Remove(id);
+            await _productRepository.RemoveAsync(id);
             return RedirectToAction("Index");
+        }
+
+        private async Task<ActionResult> CheckIntegrityBeforViewAsync(long? id)
+        {
+            if (id == null)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest);
+            }
+
+            var product = await _productRepository.FindByIdAsync(id.Value);
+            if (product == null)
+            {
+                return StatusCode(StatusCodes.Status404NotFound);
+            }
+
+            return View(product);
         }
     }
 }
