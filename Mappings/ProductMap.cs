@@ -1,43 +1,23 @@
 using AspNetCoreNHibernate.Models;
-using NHibernate;
-using NHibernate.Mapping.ByCode;
-using NHibernate.Mapping.ByCode.Conformist;
+using FluentNHibernate.Mapping;
 
 namespace AspNetCoreNHibernate.Mappings
 {
-    public class ProductMap: ClassMapping<Product>
+    public class ProductMap : ClassMap<Product>
     {
         public ProductMap()
         {
-            Id(x => x.Id, x =>
-            {
-                x.Generator(Generators.Increment);
-                x.Type(NHibernateUtil.Int64);
-                x.Column("Id");
-            });
-    
-            Property(b => b.Name, x =>
-            {
-                x.Length(520);
-                x.Type(NHibernateUtil.String);
-                x.NotNullable(true);
-            });
-
-            Property(b => b.Quantity, x =>
-            {
-                x.Type(NHibernateUtil.Int32);
-                x.NotNullable(true);
-            });
-
-            Property(b => b.Price, x =>
-            {
-                x.Type(NHibernateUtil.Double);
-                x.Scale(2);
-                x.Precision(15);
-                x.NotNullable(true);
-            });
-    
             Table("Products");
+
+            Id(b => b.Id).GeneratedBy.Identity();
+
+            Map(b => b.Name).Not.Nullable().Length(520);
+
+            Map(b => b.Quantity).Not.Nullable();
+
+            Map(b => b.Price).Nullable().Scale(2).Precision(5);
+
+            Component(b => b.Audit);
         }
     }
 }

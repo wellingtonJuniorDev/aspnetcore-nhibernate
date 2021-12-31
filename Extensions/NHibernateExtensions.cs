@@ -1,8 +1,8 @@
+using FluentNHibernate.Cfg;
+using FluentNHibernate.Cfg.Db;
 using Microsoft.Extensions.DependencyInjection;
 using NHibernate.Cfg;
-using NHibernate.Cfg.MappingSchema;
-using NHibernate.Dialect;
-using NHibernate.Mapping.ByCode;
+using System.Reflection;
 
 namespace AspNetCoreNHibernate.Extensions
 {
@@ -10,27 +10,24 @@ namespace AspNetCoreNHibernate.Extensions
     {
         public static IServiceCollection AddNHibernate(this IServiceCollection services, string connectionString)
         {
-            var mapper = new ModelMapper();
-            mapper.AddMappings(typeof(NHibernateExtensions).Assembly.ExportedTypes);
-            HbmMapping entityMapping = mapper.CompileMappingForAllExplicitlyAddedEntities();
-    
             var configuration = new Configuration();
             configuration.DataBaseIntegration(c =>
             {
-                c.Dialect<SQLiteDialect>();
-                c.ConnectionString = connectionString;
                 c.KeywordsAutoImport = Hbm2DDLKeyWords.AutoQuote;
                 c.SchemaAction = SchemaAutoAction.Update;
                 c.LogFormattedSql = true;
                 c.LogSqlInConsole = true;
             });
-            configuration.AddMapping(entityMapping);
-    
-            var sessionFactory = configuration.BuildSessionFactory();
-    
-            services.AddSingleton(sessionFactory);
-            services.AddScoped(factory => sessionFactory.OpenSession());
-            
+
+            var fluentSessionFactory = Fluently
+                .Configure(configuration)
+                .Database(SQLiteConfiguration.Standard.ConnectionString(connectionString))
+                .Mappings(m => m.FluentMappings.AddFromAssembly(Assembly.GetExecutingAssembly()))
+                .BuildSessionFactory();
+
+            services.AddSingleton(fluentSessionFactory);
+            services.AddScoped(factory => fluentSessionFactory.OpenSession());
+
             return services;
         }
     }

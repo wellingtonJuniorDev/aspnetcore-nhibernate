@@ -31,10 +31,12 @@ namespace AspNetCoreNHibernate.Controllers
         // POST: Products/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind("Id,Name,Quantity,Price")] Product product)
+        public async Task<ActionResult> Create(Product product)
         {
             if (ModelState.IsValid)
             {
+                product.AuditInsertion();
+
                 await _productRepository.AddAsync(product);
                 return RedirectToAction("Index");
             }
@@ -49,10 +51,12 @@ namespace AspNetCoreNHibernate.Controllers
         // POST: Products/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind("Id,Name,Quantity,Price")] Product product)
+        public async Task<ActionResult> Edit(Product product)
         {
             if (ModelState.IsValid)
             {
+                product.AuditUpdate();
+
                 await _productRepository.UpdateAsync(product);
                 return RedirectToAction("Index");
             }
