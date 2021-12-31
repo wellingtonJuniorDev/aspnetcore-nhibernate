@@ -12,12 +12,13 @@ namespace AspNetCoreNHibernate.Mappings
             Id(b => b.Id).GeneratedBy.Identity();
 
             Map(b => b.Name).Not.Nullable().Length(520);
-
             Map(b => b.Quantity).Not.Nullable();
-
             Map(b => b.Price).Nullable().Scale(2).Precision(5);
-
+            
             Component(b => b.Audit);
+                       
+            References(b => b.Category)
+                .Columns("[CategoryId]"); // will be created at Products Table
         }
     }
 }

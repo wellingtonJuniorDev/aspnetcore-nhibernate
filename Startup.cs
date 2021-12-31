@@ -22,6 +22,7 @@ namespace AspNetCoreNHibernate
         {
             services.AddNHibernate(Configuration.GetConnectionString("SQLiteConnection"));
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
 
             services.AddControllersWithViews();
         }
