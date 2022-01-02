@@ -14,6 +14,10 @@
         <th>
             @Html.DisplayNameFor(model => model.Name)
         </th>
+
+        <th>
+            @nameof(Category.Products)
+        </th>
       
         <th></th>
     </tr>
@@ -24,6 +28,10 @@
             @Html.DisplayFor(modelItem => item.Name)
         </td>
        
+        <td>
+            @item.Products?.Count()
+        </td>
+
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
             @Html.ActionLink("Details", "Details", new { id=item.Id }) |

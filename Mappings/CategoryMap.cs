@@ -16,6 +16,7 @@ namespace AspNetCoreNHibernate.Mappings
             HasMany(x => x.Products)
                 .Table("Products")
                 .ForeignKeyConstraintName("[FK_Products.Category]")
+                .Inverse() // stop auto updating products table
                 .KeyColumn("[CategoryId]"); // will be created at Products Table
         }
     }

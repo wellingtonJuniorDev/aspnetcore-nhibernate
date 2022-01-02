@@ -2,6 +2,7 @@ using AspNetCoreNHibernate.Models;
 using AspNetCoreNHibernate.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,12 +11,14 @@ namespace AspNetCoreNHibernate.Controllers
     public class ProductController : Controller
     {
         private readonly IProductRepository _productRepository;
+        private readonly ICategoryRepository _categoryRepository;
 
-        public ProductController(IProductRepository productRepository)
+        public ProductController(IProductRepository productRepository, ICategoryRepository categoryRepository)
         {
             _productRepository = productRepository;
+            _categoryRepository = categoryRepository;
         }
-        
+
         // GET: Products
         public ActionResult Index() 
             => View(_productRepository.FindAll().ToList());
@@ -25,8 +28,11 @@ namespace AspNetCoreNHibernate.Controllers
             => await CheckIntegrityBeforViewAsync(id);
 
         // GET: Products/Create
-        public ActionResult Create() 
-            => View();
+        public ActionResult Create()
+        {
+            GetViewBagCategories();
+            return View();
+        }
 
         // POST: Products/Create
         [HttpPost]
@@ -89,7 +95,24 @@ namespace AspNetCoreNHibernate.Controllers
                 return StatusCode(StatusCodes.Status404NotFound);
             }
 
+            GetViewBagCategories(product.Category?.Id ?? 0);
+
             return View(product);
+        }
+
+        private void GetViewBagCategories(long selectedCategory = 0)
+        {
+            var categories = _categoryRepository.FindAll();
+            var items = categories
+                .Select(s => new SelectListItem 
+                { 
+                    Text = s.Name, 
+                    Value = s.Id.ToString(), 
+                    Selected = s.Id == selectedCategory 
+                })
+                .ToList();
+
+            ViewBag.Categories = items;
         }
     }
 }
