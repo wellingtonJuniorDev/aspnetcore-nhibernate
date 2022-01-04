@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace AspNetCoreNHibernate.Repositories
 {
-    public class BaseRepository<TEntity> : IRepository<TEntity>
+    public abstract class BaseRepository<TEntity> : IRepository<TEntity>
     {
         protected readonly ISession _session;
 
-        public BaseRepository(ISession session)
+        protected BaseRepository(ISession session)
         {
             _session = session;
         }
@@ -46,9 +46,9 @@ namespace AspNetCoreNHibernate.Repositories
             return _session.Query<TEntity>().ToList();
         }
 
-        public Task<TEntity> FindByIdAsync(long id)
+        public async Task<TEntity> FindByIdAsync(long id)
         {
-            return _session.GetAsync<TEntity>(id);
+            return await _session.GetAsync<TEntity>(id);
         }
 
         public async Task RemoveAsync(long id)
