@@ -8,7 +8,7 @@ POC para testar o ORM Nhibernate para o AspnetCore versão 3.1
 
 
 ### Database Schema 
-<img src="wwwroot/img/database.png" alt="schema banco de dados">
+<img src="AspNetCoreNHibernate/wwwroot/img/database.png" alt="schema banco de dados">
   
   
   
