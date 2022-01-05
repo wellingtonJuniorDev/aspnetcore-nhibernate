@@ -10,12 +10,14 @@ namespace AspNetCoreNHibernate.Controllers
     public class SupplierController : Controller
     {
         private readonly ISupplierRepository _supplierRepository;
+        private readonly IProductRepository _productRepository;
 
-        public SupplierController(ISupplierRepository supplierRepository)
+        public SupplierController(ISupplierRepository supplierRepository, IProductRepository productRepository)
         {
             _supplierRepository = supplierRepository;
+            _productRepository = productRepository;
         }
-        
+
         public ActionResult Index() 
             => View(_supplierRepository.FindAll().ToList());
 
@@ -23,8 +25,11 @@ namespace AspNetCoreNHibernate.Controllers
             => await CheckIntegrityBeforViewAsync(id);
 
         // GET: Products/Create
-        public ActionResult Create() 
-            => View();
+        public ActionResult Create()
+        {
+            GetProductsMultiSelect();
+            return View();
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -33,6 +38,8 @@ namespace AspNetCoreNHibernate.Controllers
             if (ModelState.IsValid)
             {
                 supplier.Company.Supplier = supplier; // Required to save company entity
+                supplier.SetSelectedProducts();
+
                 await _supplierRepository.AddAsync(supplier);
                 return RedirectToAction("Index");
             }
@@ -41,7 +48,10 @@ namespace AspNetCoreNHibernate.Controllers
         }
 
         public async Task<ActionResult> Edit(long? id)
-            => await CheckIntegrityBeforViewAsync(id);
+        {
+            GetProductsMultiSelect();
+            return await CheckIntegrityBeforViewAsync(id);
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -50,6 +60,8 @@ namespace AspNetCoreNHibernate.Controllers
             if (ModelState.IsValid)
             {
                 supplier.Company.Supplier = supplier; // Required to save company entity
+                supplier.SetSelectedProducts();
+
                 await _supplierRepository.UpdateAsync(supplier);
                 return RedirectToAction("Index");
             }
@@ -81,6 +93,12 @@ namespace AspNetCoreNHibernate.Controllers
             }
 
             return View(supplier);
+        }
+
+        private void GetProductsMultiSelect()
+        {
+            var products = _productRepository.FindAll();
+            ViewBag.Products = products;
         }
     }
 }

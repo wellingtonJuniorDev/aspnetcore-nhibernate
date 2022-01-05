@@ -12,9 +12,12 @@ namespace AspNetCoreNHibernate.Mappings
             Map(b => b.Price).Nullable().Scale(2).Precision(5);
 
             Component(b => b.Audit);
-            
+
             References(b => b.Category)
                 .Columns("[CategoryId]"); // will be created at Products Table
+
+            HasManyToMany(x => x.Suppliers)
+                .Table("[SuppliersProducts]"); // NxN Table
         }
     }
 }

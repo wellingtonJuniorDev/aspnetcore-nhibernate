@@ -12,11 +12,16 @@ namespace AspNetCoreNHibernate.Controllers
     {
         private readonly IProductRepository _productRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly ISupplierRepository _supplierRepository;
 
-        public ProductController(IProductRepository productRepository, ICategoryRepository categoryRepository)
+        public ProductController(
+            IProductRepository productRepository, 
+            ICategoryRepository categoryRepository, 
+            ISupplierRepository supplierRepository)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
+            _supplierRepository = supplierRepository;
         }
 
         // GET: Products
@@ -31,6 +36,8 @@ namespace AspNetCoreNHibernate.Controllers
         public ActionResult Create()
         {
             GetViewBagCategories();
+            GetSuppliersMultiSelect();
+
             return View();
         }
 
@@ -42,6 +49,7 @@ namespace AspNetCoreNHibernate.Controllers
             if (ModelState.IsValid)
             {
                 product.AuditInsertion();
+                product.SetSelectedSuppliers();
 
                 await _productRepository.AddAsync(product);
                 return RedirectToAction("Index");
@@ -52,7 +60,11 @@ namespace AspNetCoreNHibernate.Controllers
 
         // GET: Products/Edit/5
         public async Task<ActionResult> Edit(long? id)
-            => await CheckIntegrityBeforViewAsync(id);
+        {
+            GetSuppliersMultiSelect();
+
+            return await CheckIntegrityBeforViewAsync(id);
+        }
 
         // POST: Products/Edit/5
         [HttpPost]
@@ -62,6 +74,7 @@ namespace AspNetCoreNHibernate.Controllers
             if (ModelState.IsValid)
             {
                 product.AuditUpdate();
+                product.SetSelectedSuppliers();
 
                 await _productRepository.UpdateAsync(product);
                 return RedirectToAction("Index");
@@ -113,6 +126,12 @@ namespace AspNetCoreNHibernate.Controllers
                 .ToList();
 
             ViewBag.Categories = items;
+        }
+
+        private void GetSuppliersMultiSelect()
+        {
+            var suppliers = _supplierRepository.FindAll();
+            ViewBag.Suppliers = suppliers;
         }
     }
 }

@@ -9,6 +9,9 @@ namespace AspNetCoreNHibernate.Mappings
             Table("Suppliers");
 
             HasOne(x => x.Company).Cascade.All();
+
+            HasManyToMany(x => x.Products)
+                .Table("[SuppliersProducts]");
         }
     }
 }
