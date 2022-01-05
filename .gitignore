@@ -5,6 +5,7 @@
 
 ## SQLite db file
 StoreNHibernate.db
+TestNHibernate.db
 
 # User-specific files
 *.rsuser
