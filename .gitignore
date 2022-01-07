@@ -6,6 +6,7 @@
 ## SQLite db file
 StoreNHibernate.db
 TestNHibernate.db
+StoreMigrator.db
 
 # User-specific files
 *.rsuser

@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.32002.261
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCoreNHibernate", "AspNetCoreNHibernate\AspNetCoreNHibernate.csproj", "{3F5A7EE7-D837-4396-8728-90CC6701A19D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCoreNHibernate.Test", "AspNetCoreNHibernate.Test\AspNetCoreNHibernate.Test.csproj", "{84757664-55EC-4802-A06B-F0D27D36AD10}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCoreNHibernate.Test", "AspNetCoreNHibernate.Test\AspNetCoreNHibernate.Test.csproj", "{84757664-55EC-4802-A06B-F0D27D36AD10}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCoreNHibernate.FluentMigrator", "AspNetCoreNHibernate.FluentMigrator\AspNetCoreNHibernate.FluentMigrator.csproj", "{C9F4BADE-B835-4365-A828-C8489AB2753A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{84757664-55EC-4802-A06B-F0D27D36AD10}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{84757664-55EC-4802-A06B-F0D27D36AD10}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{84757664-55EC-4802-A06B-F0D27D36AD10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9F4BADE-B835-4365-A828-C8489AB2753A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9F4BADE-B835-4365-A828-C8489AB2753A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9F4BADE-B835-4365-A828-C8489AB2753A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9F4BADE-B835-4365-A828-C8489AB2753A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
